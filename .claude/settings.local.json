@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rt devto trending:*)",
+      "Bash(rt cache stats:*)",
+      "Bash(rt reddit:*)",
+      "Bash(rt google keywords:*)"
+    ]
+  }
+}
