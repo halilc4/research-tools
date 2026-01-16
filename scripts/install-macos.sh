@@ -184,6 +184,11 @@ else:
 if 'mcpServers' not in config:
     config['mcpServers'] = {}
 
+# Remove old version if exists
+if 'research-tools' in config['mcpServers']:
+    del config['mcpServers']['research-tools']
+    print("  Removed old research-tools config.")
+
 server_config = {
     "command": uvx_path,
     "args": ["--from", "mcp-cli-research-tools[mcp]", "rt-mcp"]

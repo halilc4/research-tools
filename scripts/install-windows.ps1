@@ -9,7 +9,7 @@ Write-Host "`n=== Research Tools MCP Installer ===" -ForegroundColor Cyan
 # PREREQUISITES
 # =============================================================================
 
-Write-Host "`n[1/5] Checking prerequisites..." -ForegroundColor Yellow
+Write-Host "`n[1/4] Checking prerequisites..." -ForegroundColor Yellow
 
 # --- Python ---
 Write-Host "`nChecking Python..." -ForegroundColor Gray
@@ -168,7 +168,7 @@ Write-Host "  uvx path: $uvxPath" -ForegroundColor Gray
 # API KEYS
 # =============================================================================
 
-Write-Host "`n[2/5] API Keys Configuration" -ForegroundColor Yellow
+Write-Host "`n[2/4] API Keys Configuration" -ForegroundColor Yellow
 Write-Host "Press Enter to skip any key.`n"
 
 $devtoKey = Read-Host "DEVTO_API_KEY (https://dev.to/settings/extensions)"
@@ -178,7 +178,7 @@ $serperKey = Read-Host "SERPER_API_KEY (https://serper.dev/api-key)"
 # CONFIGURE CLAUDE DESKTOP
 # =============================================================================
 
-Write-Host "`n[3/5] Configuring Claude Desktop..." -ForegroundColor Yellow
+Write-Host "`n[3/4] Configuring Claude Desktop..." -ForegroundColor Yellow
 
 $configDir = "$env:APPDATA\Claude"
 $configPath = "$configDir\claude_desktop_config.json"
@@ -207,6 +207,11 @@ else:
 if 'mcpServers' not in config:
     config['mcpServers'] = {}
 
+# Remove old version if exists
+if 'research-tools' in config['mcpServers']:
+    del config['mcpServers']['research-tools']
+    print('  Removed old research-tools config.')
+
 server_config = {
     'command': uvx_path,
     'args': ['--from', 'mcp-cli-research-tools[mcp]', 'rt-mcp']
@@ -233,22 +238,10 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 # =============================================================================
-# TEST MCP SERVER
-# =============================================================================
-
-Write-Host "`n[4/5] Testing MCP server..." -ForegroundColor Yellow
-try {
-    & $uvxPath --from mcp-cli-research-tools[mcp] rt-mcp --help 2>$null | Out-Null
-    Write-Host "  MCP server OK" -ForegroundColor Green
-} catch {
-    Write-Host "  Warning: Could not verify MCP server. It may still work." -ForegroundColor Yellow
-}
-
-# =============================================================================
 # RESTART CLAUDE DESKTOP
 # =============================================================================
 
-Write-Host "`n[5/5] Restarting Claude Desktop..." -ForegroundColor Yellow
+Write-Host "`n[4/4] Restarting Claude Desktop..." -ForegroundColor Yellow
 
 $claudeProcess = Get-Process -Name "Claude" -ErrorAction SilentlyContinue
 if ($claudeProcess) {
