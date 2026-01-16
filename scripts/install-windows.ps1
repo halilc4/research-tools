@@ -1,7 +1,7 @@
 # Research Tools MCP - Windows Installer
 # Run: powershell -ExecutionPolicy Bypass -File install-windows.ps1
 
-$ErrorActionPreference = "Stop"
+# Don't use $ErrorActionPreference = "Stop" globally - it breaks winget/choco which return non-zero on success
 
 Write-Host "`n=== Research Tools MCP Installer ===" -ForegroundColor Cyan
 
@@ -77,18 +77,22 @@ if ($pythonPath) {
         $installerUrl = "https://www.python.org/ftp/python/3.12.8/python-3.12.8-amd64.exe"
         $installerPath = "$env:TEMP\python-installer.exe"
 
-        Invoke-WebRequest -Uri $installerUrl -OutFile $installerPath -UseBasicParsing
+        try {
+            Invoke-WebRequest -Uri $installerUrl -OutFile $installerPath -UseBasicParsing
 
-        Write-Host "  Running Python installer (silent)..." -ForegroundColor Gray
-        Start-Process -FilePath $installerPath -ArgumentList "/quiet", "InstallAllUsers=0", "PrependPath=1" -Wait
+            Write-Host "  Running Python installer (silent)..." -ForegroundColor Gray
+            Start-Process -FilePath $installerPath -ArgumentList "/quiet", "InstallAllUsers=0", "PrependPath=1" -Wait
 
-        Remove-Item $installerPath -Force -ErrorAction SilentlyContinue
+            Remove-Item $installerPath -Force -ErrorAction SilentlyContinue
 
-        # Refresh PATH
-        $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
-        $pythonPath = "$env:LOCALAPPDATA\Programs\Python\Python312\python.exe"
-        if (-not (Test-Path $pythonPath)) { $pythonPath = "python" }
-        $installed = $true
+            # Refresh PATH
+            $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+            $pythonPath = "$env:LOCALAPPDATA\Programs\Python\Python312\python.exe"
+            if (-not (Test-Path $pythonPath)) { $pythonPath = "python" }
+            $installed = $true
+        } catch {
+            Write-Host "  Failed to download Python: $_" -ForegroundColor Red
+        }
     }
 
     if ($installed) {
@@ -130,8 +134,18 @@ if ($uvPath) {
 } else {
     Write-Host "  uv not found. Installing..." -ForegroundColor Yellow
 
-    # Use official installer
-    Invoke-RestMethod https://astral.sh/uv/install.ps1 | Invoke-Expression
+    # Use official installer (run in subprocess to prevent exit from closing our shell)
+    $installerScript = "$env:TEMP\uv-install.ps1"
+    try {
+        Invoke-RestMethod https://astral.sh/uv/install.ps1 -OutFile $installerScript
+        & powershell -ExecutionPolicy Bypass -File $installerScript
+        Remove-Item $installerScript -Force -ErrorAction SilentlyContinue
+    } catch {
+        Write-Host "  Failed to download uv installer: $_" -ForegroundColor Red
+    }
+
+    # Refresh PATH (uv installer modifies user PATH)
+    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
     # Find installed uv
     $possiblePaths = @(
