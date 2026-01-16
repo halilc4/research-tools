@@ -2,8 +2,6 @@
 # Research Tools MCP - macOS Installer
 # Run: chmod +x install-macos.sh && ./install-macos.sh
 
-set -e
-
 echo ""
 echo "=== Research Tools MCP Installer ==="
 
