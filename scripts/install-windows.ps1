@@ -99,6 +99,7 @@ if ($pythonPath) {
         Write-Host "  Python installed." -ForegroundColor Green
     } else {
         Write-Host "  Failed to install Python." -ForegroundColor Red
+        Read-Host "`nPress Enter to exit"
         exit 1
     }
 }
@@ -167,6 +168,7 @@ if ($uvPath) {
         Write-Host "  uv installed: $uvPath" -ForegroundColor Green
     } else {
         Write-Host "  Failed to install uv." -ForegroundColor Red
+        Read-Host "`nPress Enter to exit"
         exit 1
     }
 }
@@ -248,6 +250,7 @@ print(f'  Config saved to: {config_path}')
 "@
 if ($LASTEXITCODE -ne 0) {
     Write-Host "  Failed to configure Claude Desktop." -ForegroundColor Red
+    Read-Host "`nPress Enter to exit"
     exit 1
 }
 
@@ -285,3 +288,5 @@ Summary:
 
 Research Tools MCP is now available in Claude Desktop.
 "@
+
+Read-Host "`nPress Enter to close"
