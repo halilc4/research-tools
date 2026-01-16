@@ -1,6 +1,6 @@
 # Research Tools
 
-CLI toolkit za dev.to, Google/Serper, Reddit i YouTube research. Globalni alias `rt`.
+CLI toolkit + MCP server za dev.to, Google/Serper, Reddit i YouTube research. Globalni alias `rt`.
 
 ## Quick Start
 
@@ -35,6 +35,29 @@ rt cache clear
 rt cache cleanup
 ```
 
+## MCP Server
+
+```bash
+# Run MCP server
+rt-mcp
+
+# Or via uvx (install from PyPI)
+uvx mcp-cli-research-tools
+```
+
+### MCP Tools
+- `devto_trending` - Trending posts from dev.to
+- `devto_tags` - Tag engagement analysis
+- `devto_authors` - Top authors by engagement
+- `google_keywords` - Autocomplete suggestions
+- `google_serp` - SERP analysis
+- `google_paa` - People Also Ask
+- `google_related` - Related searches
+- `reddit_posts` - Subreddit monitoring
+- `youtube_search` - Video search
+- `youtube_channel` - Channel videos
+- `youtube_trending` - Trending videos
+
 ## Setup
 
 ```bash
@@ -58,7 +81,8 @@ SQLite baza (`~/.research-tools/data.db`). TTL: Serper 48h, Reddit 12h, YouTube 
 src/research_tools/
 ├── cli/           # Cyclopts CLI
 ├── db/            # SQLite + CacheRepository
-├── serper/        # Serper API client (+ Videos endpoint)
-├── sources/       # DevTo, Serper, Reddit, YouTube research
+├── mcp/           # FastMCP server
+├── serper/        # Serper API client
+├── sources/       # DevTo, Serper, Reddit, YouTube
 └── output.py      # Rich rendering
 ```
