@@ -8,7 +8,7 @@ from rich.panel import Panel
 from rich.text import Text
 
 from .sources import Article, TagStats, AuthorStats, KeywordSuggestions, SerpAnalysis, RedditPost
-from .serper.client import PeopleAlsoAsk, OrganicResult
+from .serper.client import PeopleAlsoAsk, OrganicResult, VideoResult
 
 
 # Force UTF-8 on Windows
@@ -231,3 +231,34 @@ def render_reddit(
     console.print(table)
     console.print()
     console.print(f"[dim]Showing {len(posts)} posts[/dim]")
+
+
+def render_youtube(
+    query: str,
+    videos: list[VideoResult],
+) -> None:
+    """Render YouTube videos as Rich table."""
+    table = Table(title=f"YouTube: {query}", show_lines=False)
+
+    table.add_column("#", style="dim", width=3)
+    table.add_column("Title", style="bold", max_width=45, overflow="ellipsis")
+    table.add_column("Channel", style="cyan", max_width=18, overflow="ellipsis")
+    table.add_column("Duration", justify="right")
+    table.add_column("Views", justify="right", style="green")
+    table.add_column("Date", style="dim")
+
+    for video in videos:
+        pos_style = "green" if video.position <= 3 else "yellow" if video.position <= 10 else "dim"
+        table.add_row(
+            f"[{pos_style}]{video.position}[/{pos_style}]",
+            video.title,
+            video.channel or "-",
+            video.duration or "-",
+            video.views or "-",
+            video.date or "-",
+        )
+
+    console.print()
+    console.print(table)
+    console.print()
+    console.print(f"[dim]Showing {len(videos)} videos[/dim]")

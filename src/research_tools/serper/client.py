@@ -34,6 +34,21 @@ class SearchResult:
     related_searches: list[str] = field(default_factory=list)
 
 
+@dataclass
+class VideoResult:
+    """Single video search result."""
+
+    position: int
+    title: str
+    link: str
+    snippet: str
+    channel: str
+    duration: str
+    views: str
+    date: str
+    thumbnail: str
+
+
 class SerperError(Exception):
     """Serper API error."""
 
@@ -163,6 +178,59 @@ class SerperClient:
         return [
             s.get("value", s) if isinstance(s, dict) else s
             for s in suggestions
+        ]
+
+    async def videos(
+        self,
+        query: str,
+        num: int = 10,
+        gl: str = "us",
+        hl: str = "en",
+    ) -> list[VideoResult]:
+        """
+        Search Google Videos (includes YouTube results).
+
+        Args:
+            query: Search query
+            num: Number of results (max 100)
+            gl: Country code (us, gb, rs, etc.)
+            hl: Language code (en, sr, etc.)
+
+        Returns:
+            List of VideoResult items
+        """
+        response = await self._client.post(
+            f"{self.BASE_URL}/videos",
+            json={
+                "q": query,
+                "num": num,
+                "gl": gl,
+                "hl": hl,
+            },
+        )
+
+        if response.status_code == 401:
+            raise SerperError("Invalid API key")
+        if response.status_code == 429:
+            raise SerperError("Rate limit exceeded")
+        if response.status_code != 200:
+            raise SerperError(f"API error: {response.status_code}")
+
+        data = response.json()
+
+        return [
+            VideoResult(
+                position=i + 1,
+                title=item.get("title", ""),
+                link=item.get("link", ""),
+                snippet=item.get("snippet", ""),
+                channel=item.get("channel", ""),
+                duration=item.get("duration", ""),
+                views=item.get("views", ""),
+                date=item.get("date", ""),
+                thumbnail=item.get("imageUrl", ""),
+            )
+            for i, item in enumerate(data.get("videos", []))
         ]
 
     def find_url_position(

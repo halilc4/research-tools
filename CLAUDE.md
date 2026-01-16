@@ -1,6 +1,6 @@
 # Research Tools
 
-CLI toolkit za dev.to, Google/Serper i Reddit research. Globalni alias `rt`.
+CLI toolkit za dev.to, Google/Serper, Reddit i YouTube research. Globalni alias `rt`.
 
 ## Quick Start
 
@@ -24,6 +24,11 @@ rt google keywords -q "test" --no-cache
 rt reddit -s typescript
 rt reddit -s typescript,webdev --sort top --period month
 
+# YouTube research
+rt youtube search -q "typescript tutorial"
+rt yt channel -c "Fireship" --limit 10
+rt yt trending --category music --region us
+
 # Cache management
 rt cache stats
 rt cache clear
@@ -45,7 +50,7 @@ SERPER_API_KEY=xxx   # https://serper.dev/api-key
 
 ## Cache
 
-SQLite baza (`~/.research-tools/data.db`). TTL: Serper 48h, Reddit 12h.
+SQLite baza (`~/.research-tools/data.db`). TTL: Serper 48h, Reddit 12h, YouTube 24h.
 
 ## Struktura
 
@@ -53,7 +58,7 @@ SQLite baza (`~/.research-tools/data.db`). TTL: Serper 48h, Reddit 12h.
 src/research_tools/
 ├── cli/           # Cyclopts CLI
 ├── db/            # SQLite + CacheRepository
-├── serper/        # Serper API client
-├── sources/       # DevTo, Serper, Reddit research
+├── serper/        # Serper API client (+ Videos endpoint)
+├── sources/       # DevTo, Serper, Reddit, YouTube research
 └── output.py      # Rich rendering
 ```

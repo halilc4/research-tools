@@ -1,5 +1,5 @@
 """Serper.dev API client."""
 
-from .client import SerperClient
+from .client import SerperClient, VideoResult
 
-__all__ = ["SerperClient"]
+__all__ = ["SerperClient", "VideoResult"]
