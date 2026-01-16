@@ -1,6 +1,6 @@
 [project]
 name = "mcp-cli-research-tools"
-version = "0.1.0"
+version = "0.1.1"
 description = "CLI toolkit for dev.to, Google/Serper, and Reddit research"
 readme = "README.md"
 authors = [
