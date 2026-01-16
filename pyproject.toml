@@ -1,5 +1,5 @@
 [project]
-name = "research-tools"
+name = "mcp-cli-research-tools"
 version = "0.1.0"
 description = "CLI toolkit for dev.to, Google/Serper, and Reddit research"
 readme = "README.md"
@@ -15,8 +15,12 @@ dependencies = [
     "sqlmodel>=0.0.22",
 ]
 
+[project.optional-dependencies]
+mcp = ["fastmcp>=2.0.0"]
+
 [project.scripts]
 rt = "research_tools.cli:main"
+rt-mcp = "research_tools.mcp:main"
 
 [build-system]
 requires = ["hatchling"]

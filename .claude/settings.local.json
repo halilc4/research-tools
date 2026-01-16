@@ -4,7 +4,13 @@
       "Bash(rt devto trending:*)",
       "Bash(rt cache stats:*)",
       "Bash(rt reddit:*)",
-      "Bash(rt google keywords:*)"
+      "Bash(rt google keywords:*)",
+      "Bash(tree:*)",
+      "Bash(xargs cat:*)",
+      "WebFetch(domain:serper.dev)",
+      "Bash(uv run rt --help:*)",
+      "Bash(uv run:*)",
+      "Bash(uv build:*)"
     ]
   }
 }
