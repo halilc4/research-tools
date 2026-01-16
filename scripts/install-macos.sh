@@ -12,7 +12,7 @@ echo "=== Research Tools MCP Installer ==="
 # =============================================================================
 
 echo ""
-echo "[1/5] Checking prerequisites..."
+echo "[1/4] Checking prerequisites..."
 
 # --- Python ---
 echo ""
@@ -30,17 +30,17 @@ PYTHON_PATHS=(
 )
 
 for p in "${PYTHON_PATHS[@]}"; do
-    if command -v "$p" &> /dev/null; then
+    if command -v "$p" &> /dev/null && "$p" --version &> /dev/null; then
         PYTHON_PATH=$(command -v "$p")
         break
-    elif [[ -x "$p" ]]; then
+    elif [[ -x "$p" ]] && "$p" --version &> /dev/null; then
         PYTHON_PATH="$p"
         break
     fi
 done
 
 if [[ -n "$PYTHON_PATH" ]]; then
-    PYTHON_VERSION=$("$PYTHON_PATH" --version 2>&1)
+    PYTHON_VERSION=$("$PYTHON_PATH" --version 2>&1 || echo "unknown")
     echo "  Found Python: $PYTHON_PATH ($PYTHON_VERSION)"
 else
     echo "  Python not found. Installing..."
@@ -77,6 +77,11 @@ else
         echo "  Python installed: $PYTHON_PATH"
     else
         echo "  Failed to install Python."
+        echo ""
+        echo "  Manual installation options:"
+        echo "    1. Install Homebrew: /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
+        echo "    2. Then install Python: brew install python@3.12"
+        echo "    3. Or download from: https://www.python.org/downloads/macos/"
         exit 1
     fi
 fi
@@ -95,17 +100,17 @@ UV_PATHS=(
 )
 
 for u in "${UV_PATHS[@]}"; do
-    if command -v "$u" &> /dev/null; then
+    if command -v "$u" &> /dev/null && "$u" --version &> /dev/null; then
         UV_PATH=$(command -v "$u")
         break
-    elif [[ -x "$u" ]]; then
+    elif [[ -x "$u" ]] && "$u" --version &> /dev/null; then
         UV_PATH="$u"
         break
     fi
 done
 
 if [[ -n "$UV_PATH" ]]; then
-    UV_VERSION=$("$UV_PATH" --version 2>&1)
+    UV_VERSION=$("$UV_PATH" --version 2>&1 || echo "unknown")
     echo "  Found uv: $UV_PATH ($UV_VERSION)"
 else
     echo "  uv not found. Installing..."
@@ -130,6 +135,10 @@ else
         echo "  uv installed: $UV_PATH"
     else
         echo "  Failed to install uv."
+        echo ""
+        echo "  Manual installation:"
+        echo "    curl -LsSf https://astral.sh/uv/install.sh | sh"
+        echo "    Then restart terminal and run this script again."
         exit 1
     fi
 fi
@@ -146,7 +155,7 @@ echo "  uvx path: $UVX_PATH"
 # =============================================================================
 
 echo ""
-echo "[2/5] API Keys Configuration"
+echo "[2/4] API Keys Configuration"
 echo "Press Enter to skip any key."
 echo ""
 
@@ -158,7 +167,7 @@ read -rp "SERPER_API_KEY (https://serper.dev/api-key): " SERPER_KEY
 # =============================================================================
 
 echo ""
-echo "[3/5] Configuring Claude Desktop..."
+echo "[3/4] Configuring Claude Desktop..."
 
 CONFIG_DIR="$HOME/Library/Application Support/Claude"
 CONFIG_PATH="$CONFIG_DIR/claude_desktop_config.json"
@@ -211,23 +220,11 @@ print(f"  Config saved to: {config_path}")
 EOF
 
 # =============================================================================
-# TEST MCP SERVER
-# =============================================================================
-
-echo ""
-echo "[4/5] Testing MCP server..."
-if "$UVX_PATH" --from mcp-cli-research-tools[mcp] rt-mcp --help &> /dev/null; then
-    echo "  MCP server OK"
-else
-    echo "  Warning: Could not verify MCP server. It may still work."
-fi
-
-# =============================================================================
 # RESTART CLAUDE DESKTOP
 # =============================================================================
 
 echo ""
-echo "[5/5] Restarting Claude Desktop..."
+echo "[4/4] Restarting Claude Desktop..."
 
 if pgrep -x "Claude" > /dev/null; then
     pkill -x "Claude"
